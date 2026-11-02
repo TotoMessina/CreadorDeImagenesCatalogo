@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creador de Banners de Categorías & Marcas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #38bdf8;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      background-color: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* MAIN APP LAYOUT */
+    .app-container {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      flex: 1;
+      height: calc(100vh - 67px);
+      overflow: hidden;
+    }
+
+    @media (max-width: 1024px) {
+      .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+    }
+
+    /* SIDEBAR (CONTROLS) */
+    .sidebar {
+      background-color: #131d31;
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #334155;
+      border-radius: 4px;
+    }
+
+    /* CONTROL CARDS */
+    .control-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .control-card:hover {
+      border-color: #475569;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* FIELD GROUPS */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .field-value {
+      color: var(--accent);
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    /* COLOR PICKER & PALETTE */
+    .color-picker-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .color-input-wrapper {
+      position: relative;
+      width: 44px;
+      height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #475569;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    input[type="color"] {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 70px;
+      height: 60px;
+      border: none;
+      cursor: pointer;
+      background: none;
+    }
+
+    .color-text-input {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-family: monospace;
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+    .palette-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .swatch-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .swatch-btn:hover {
+      transform: scale(1.15);
+      border-color: #fff;
+    }
+
+    .swatch-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    /* SLIDERS */
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      transition: transform 0.1s, background-color 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #7dd3fc;
+    }
+
+    /* SWITCH TOGGLE */
+    .switch-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    .switch-input {
+      display: none;
+    }
+
+    .switch-track {
+      width: 40px;
+      height: 22px;
+      background-color: #334155;
+      border-radius: 11px;
+      position: relative;
+      transition: background-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .switch-thumb {
+      width: 16px;
+      height: 16px;
+      background-color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .switch-input:checked + .switch-track {
+      background-color: #0284c7;
+    }
+
+    .switch-input:checked + .switch-track .switch-thumb {
+      transform: translateX(18px);
+    }
+
+    /* UPLOAD DROP ZONE */
+    .upload-zone {
+      border: 2px dashed #475569;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      background-color: rgba(30, 41, 59, 0.5);
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent);
+      background-color: rgba(56, 189, 248, 0.08);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .upload-text strong {
+      color: var(--accent);
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-input);
+      color: #e2e8f0;
+      border: 1px solid var(--border-color);
+    }
+    .btn-secondary:hover {
+      background-color: #475569;
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+    }
+
+    .quick-asset-btn {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-asset-btn:hover {
+      background-color: #334155;
+      color: #fff;
+    }
+
+    /* PREVIEW VIEWPORT AREA */
+    .preview-area {
+      background-color: #0b1120;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      background-image: radial-gradient(#1e293b 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .canvas-wrapper {
+      max-width: 90%;
+      max-height: 82vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+    }
+
+    #previewCanvas {
+      max-width: 100%;
+      max-height: 75vh;
+      width: auto;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      display: block;
+      transition: transform 0.2s ease;
+      background-color: #ffffff;
+    }
+
+    /* COMPARISON FLOATING SELECTOR */
+    .compare-container {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      font-size: 0.82rem;
+      z-index: 20;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+          <circle cx="9" cy="9" r="2"/>
+          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">Creador de Banners de Categorías</h1>
+        <p class="brand-subtitle">Formato corporativo con borde redondeado y curva característica</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-secondary btn-sm" id="btnResetDefaults" title="Restaurar valores iniciales">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Restablecer
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btnCopyClipboard" title="Copiar imagen al portapapeles">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        Copiar (Ctrl+V)
+      </button>
+      <button class="btn btn-primary" id="btnDownload">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        Descargar Imagen
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- CONTROLS SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- 1. FORMATO DE LA PLANTILLA: BORDE Y CURVA CARACTERÍSTICA -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="4" ry="4"/><path d="M12 21a9 9 0 0 0 9-9"/></svg>
+            Borde & Curva Característica
+          </span>
+          <span class="badge-pill">Plantilla</span>
+        </div>
+
+        <!-- Borde exterior blanco -->
+        <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px;">
+          <span>Borde Exterior Blanco de la Plantilla</span>
+          <input type="checkbox" id="showOuterBorder" class="switch-input" checked>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </label>
+
+        <div id="borderOptionsGroup" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="field-group">
+            <label class="field-label">
+              <span>Grosor del Borde Exterior</span>
+              <span class="field-value" id="valBorderWidth">28 px</span>
+            </label>
+            <input type="range" id="borderWidth" min="0" max="60" value="28">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span>Radio de Esquinas Redondeadas</span>
+              <span class="field-value" id="valCornerRadius">85 px</span>
+            </label>
+            <input type="range" id="cornerRadius" min="20" max="140" value="85">
+          </div>
+        </div>
+
+        <!-- Curva blanca característica en la esquina inferior -->
+        <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px; margin-top:4px;">
+          <span style="font-weight:600;">Curva Blanca Característica (Inferior Derecha)</span>
+          <input type="checkbox" id="showSwoosh" class="switch-input" checked>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </label>
+
+        <div id="swooshOptionsGroup" class="field-group">
+          <label class="field-label">
+            <span>Opacidad de la Curva</span>
+            <span class="field-value" id="valSwooshOpacity">100%</span>
+          </label>
+          <input type="range" id="swooshOpacity" min="20" max="100" value="100">
+        </div>
+      </div>
+
+      <!-- 2. COLOR DE FONDO & EFECTOS -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            Color de Fondo
+          </span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Color de la Tarjeta</label>
+          <div class="color-picker-row">
+            <div class="color-input-wrapper">
+              <input type="color" id="bgColorPicker" value="#0052b4">
+            </div>
+            <input type="text" id="bgColorText" class="color-text-input" value="#0052B4" maxlength="7">
+          </div>
+          <div class="palette-swatches">
+            <button class="swatch-btn active" data-color="#0052b4" style="background:#0052b4;" title="Azul La Salteña"></button>
+            <button class="swatch-btn" data-color="#c80c14" style="background:#c80c14;" title="Rojo Adler / Unipro"></button>
+            <button class="swatch-btn" data-color="#0a2540" style="background:#0a2540;" title="Azul Marino Noche"></button>
+            <button class="swatch-btn" data-color="#00875a" style="background:#00875a;" title="Verde Esmeralda"></button>
+            <button class="swatch-btn" data-color="#2e7d32" style="background:#2e7d32;" title="Verde Fresco"></button>
+            <button class="swatch-btn" data-color="#ea580c" style="background:#ea580c;" title="Naranja Vibrante"></button>
+            <button class="swatch-btn" data-color="#d97706" style="background:#d97706;" title="Ámbar / Oro"></button>
+            <button class="swatch-btn" data-color="#7c3aed" style="background:#7c3aed;" title="Violeta"></button>
+            <button class="swatch-btn" data-color="#be185d" style="background:#be185d;" title="Magenta"></button>
+            <button class="swatch-btn" data-color="#1e242d" style="background:#1e242d;" title="Grafito Elegante"></button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Brillo de Luz Central (Resplandor)</span>
+            <span class="field-value" id="valGlowIntensity">85%</span>
+          </label>
+          <input type="range" id="glowIntensity" min="0" max="100" value="85">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Radio del Resplandor</span>
+            <span class="field-value" id="valGlowRadius">48%</span>
+          </label>
+          <input type="range" id="glowRadius" min="20" max="80" value="48">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Viñeta / Sombras en Esquinas</span>
+            <span class="field-value" id="valVignette">55%</span>
+          </label>
+          <input type="range" id="vignetteIntensity" min="0" max="100" value="55">
+        </div>
+      </div>
+
+      <!-- 3. LOGO SUPERIOR (UNIPRO SIN FONDO - TOTALMENTE OPCIONAL) -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+            Logo Superior (Opcional)
+          </span>
+          <span class="badge-pill">Opcional</span>
+        </div>
+
+        <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px;">
+          <span style="font-weight: 600;">Incluir Logo de Cabecera</span>
+          <input type="checkbox" id="showTopLogo" class="switch-input" checked>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </label>
+
+        <div id="topLogoSection">
+          <div class="field-group">
+            <div class="upload-zone" id="topUploadZone">
+              <input type="file" id="topFileInput" accept="image/*">
+              <div class="upload-text">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto 4px; display:block; color:#94a3b8;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Arrastra o <strong>sube otro logo superior</strong>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+              <button class="quick-asset-btn" id="btnRestoreUnipro">Cargar UNIPRO sin fondo</button>
+              <button class="quick-asset-btn" id="btnClearTopLogo" style="color:#f87171;">Ocultar / Quitar</button>
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top:8px;">
+            <label class="field-label">
+              <span>Tamaño / Escala</span>
+              <span class="field-value" id="valTopScale">38%</span>
+            </label>
+            <input type="range" id="topScale" min="15" max="80" value="38">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span>Posición Vertical (Y)</span>
+              <span class="field-value" id="valTopY">14%</span>
+            </label>
+            <input type="range" id="topY" min="3" max="35" value="14">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span>Posición Horizontal (X)</span>
+              <span class="field-value" id="valTopX">50%</span>
+            </label>
+            <input type="range" id="topX" min="15" max="85" value="50">
+          </div>
+
+          <label class="switch-label" style="margin-top:4px;">
+            <span>Forzar Logo Blanco Puro</span>
+            <input type="checkbox" id="topForceWhite" class="switch-input">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 4. IMAGEN / LOGO CENTRAL (SIN FONDO) -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 8 8 12 12 16 16 12 12 8"/></svg>
+            Imagen / Logo Central (Sin Fondo)
+          </span>
+          <span class="badge-pill">Sin Fondo</span>
+        </div>
+
+        <div class="field-group">
+          <div class="upload-zone" id="centerUploadZone">
+            <input type="file" id="centerFileInput" accept="image/*">
+            <div class="upload-text">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto 6px; display:block; color:#94a3b8;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              Arrastra o <strong>haz clic para subir imagen de marca</strong>
+            </div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
+            <button class="quick-asset-btn" id="btnRestoreSaltena" style="color:#38bdf8;">Muestra LA SALTEÑA</button>
+            <button class="quick-asset-btn" id="btnRestoreAdler">Muestra ADLER</button>
+            <button class="quick-asset-btn" id="btnClearCenterLogo" style="color:#f87171;">Quitar</button>
+          </div>
+        </div>
+
+        <!-- REMOVEDOR AUTOMÁTICO DE FONDO -->
+        <div style="background: rgba(15, 23, 42, 0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;">
+          <label class="switch-label">
+            <span>✨ Quitar Fondo Blanco / Sólido Automáticamente</span>
+            <input type="checkbox" id="autoRemoveBg" class="switch-input">
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+          </label>
+          <div id="toleranceGroup" style="display:none;" class="field-group">
+            <label class="field-label">
+              <span>Tolerancia de transparencia</span>
+              <span class="field-value" id="valTolerance">35</span>
+            </label>
+            <input type="range" id="bgTolerance" min="10" max="80" value="35">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Tamaño / Escala</span>
+            <span class="field-value" id="valCenterScale">72%</span>
+          </label>
+          <input type="range" id="centerScale" min="20" max="95" value="72">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Posición Vertical (Y)</span>
+            <span class="field-value" id="valCenterY">52%</span>
+          </label>
+          <input type="range" id="centerY" min="15" max="85" value="52">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">
+            <span>Posición Horizontal (X)</span>
+            <span class="field-value" id="valCenterX">50%</span>
+          </label>
+          <input type="range" id="centerX" min="15" max="85" value="50">
+        </div>
+
+        <label class="switch-label">
+          <span>Sombra Suave Flotante (Efecto 3D)</span>
+          <input type="checkbox" id="centerDropShadow" class="switch-input" checked>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </label>
+      </div>
+
+      <!-- 5. RESOLUCIÓN & DESCARGA -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Exportación
+          </span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Resolución de salida</label>
+          <select id="exportResolution" style="background:var(--bg-input); border:1px solid var(--border-color); color:#fff; padding:9px 12px; border-radius:8px; font-size:0.85rem; cursor:pointer;">
+            <option value="1080" selected>1080 × 1080 px (Recomendado - HD)</option>
+            <option value="1200">1200 × 1200 px (E-commerce / MercadoLibre)</option>
+            <option value="800">800 × 800 px (Catálogo Web ligero)</option>
+            <option value="2000">2000 × 2000 px (Ultra HD / Impresión)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Formato</label>
+          <div style="display:flex; gap:10px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;">
+              <input type="radio" name="exportFormat" value="png" checked> PNG (Nitidez máxima)
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;">
+              <input type="radio" name="exportFormat" value="jpeg"> JPG (Ligero)
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="btnDownloadBig" style="width:100%; padding:14px; margin-top:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          Descargar Imagen Lista
+        </button>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW VIEWPORT AREA -->
+    <div class="preview-area">
+
+      <!-- FLOATING COMPARISON SWITCH -->
+      <div class="compare-container">
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" id="compareOriginalToggle">
+          <span>Ver foto de referencia:</span>
+        </label>
+        <select id="compareSelect" style="background:#1e293b; border:1px solid #475569; color:#fff; border-radius:6px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">
+          <option value="saltena" selected>La Salteña</option>
+          <option value="adler">Adler</option>
+        </select>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="previewCanvas"></canvas>
+        <img id="imgRefSaltena" src="referencia_saltena.jpg" style="display:none; max-width:100%; max-height:75vh; border-radius:14px; aspect-ratio:1/1;">
+        <img id="imgRefAdler" src="referencia_original.jpg" style="display:none; max-width:100%; max-height:75vh; border-radius:14px; aspect-ratio:1/1;">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Imagen copiada al portapapeles</span>
+  </div>
+
+  <script src="assets/default_assets.js"></script>
+  <script>
+    // --- ESTADO & CONFIGURACIÓN ---
+    const defaultConfig = {
+      bgColor: '#0052b4', // Azul corporativo La Salteña
+      glowIntensity: 0.85,
+      glowRadius: 48,
+      vignetteIntensity: 0.55,
+
+      // Formato de Plantilla (Borde y Curva)
+      showOuterBorder: true,
+      borderWidth: 28,     // px en lienzo 1000x1000
+      cornerRadius: 85,    // radio esquina tarjeta
+      showSwoosh: true,    // Curva característica en esquina inferior
+      swooshOpacity: 1.0,
+
+      // Logo Superior (UNIPRO - Opcional)
+      showTopLogo: true,
+      topScale: 38,
+      topY: 14,
+      topX: 50,
+      topForceWhite: false,
+
+      // Logo Central (Sin Fondo)
+      centerScale: 72,
+      centerY: 52,
+      centerX: 50,
+      centerDropShadow: true,
+      autoRemoveBg: false,
+      bgTolerance: 35
+    };
+
+    let config = { ...defaultConfig };
+
+    // IMÁGENES
+    let topImage = new Image();
+    let centerRawImage = new Image();
+    let centerProcessedCanvas = null;
+
+    // DOM ELEMENTS
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+    const imgRefSaltena = document.getElementById('imgRefSaltena');
+    const imgRefAdler = document.getElementById('imgRefAdler');
+    const compareOriginalToggle = document.getElementById('compareOriginalToggle');
+    const compareSelect = document.getElementById('compareSelect');
+
+    const showOuterBorder = document.getElementById('showOuterBorder');
+    const borderWidth = document.getElementById('borderWidth');
+    const valBorderWidth = document.getElementById('valBorderWidth');
+    const cornerRadius = document.getElementById('cornerRadius');
+    const valCornerRadius = document.getElementById('valCornerRadius');
+    const showSwoosh = document.getElementById('showSwoosh');
+    const swooshOpacity = document.getElementById('swooshOpacity');
+    const valSwooshOpacity = document.getElementById('valSwooshOpacity');
+
+    const bgColorPicker = document.getElementById('bgColorPicker');
+    const bgColorText = document.getElementById('bgColorText');
+    const glowIntensity = document.getElementById('glowIntensity');
+    const valGlowIntensity = document.getElementById('valGlowIntensity');
+    const glowRadius = document.getElementById('glowRadius');
+    const valGlowRadius = document.getElementById('valGlowRadius');
+    const vignetteIntensity = document.getElementById('vignetteIntensity');
+    const valVignette = document.getElementById('valVignette');
+
+    const showTopLogo = document.getElementById('showTopLogo');
+    const topScale = document.getElementById('topScale');
+    const valTopScale = document.getElementById('valTopScale');
+    const topY = document.getElementById('topY');
+    const valTopY = document.getElementById('valTopY');
+    const topX = document.getElementById('topX');
+    const valTopX = document.getElementById('valTopX');
+    const topForceWhite = document.getElementById('topForceWhite');
+    const topFileInput = document.getElementById('topFileInput');
+    const topUploadZone = document.getElementById('topUploadZone');
+
+    const centerScale = document.getElementById('centerScale');
+    const valCenterScale = document.getElementById('valCenterScale');
+    const centerY = document.getElementById('centerY');
+    const valCenterY = document.getElementById('valCenterY');
+    const centerX = document.getElementById('centerX');
+    const valCenterX = document.getElementById('valCenterX');
+    const centerDropShadow = document.getElementById('centerDropShadow');
+    const autoRemoveBg = document.getElementById('autoRemoveBg');
+    const toleranceGroup = document.getElementById('toleranceGroup');
+    const bgTolerance = document.getElementById('bgTolerance');
+    const valTolerance = document.getElementById('valTolerance');
+    const centerFileInput = document.getElementById('centerFileInput');
+    const centerUploadZone = document.getElementById('centerUploadZone');
+
+    // INICIALIZACIÓN
+    topImage.onload = () => render();
+    centerRawImage.onload = () => {
+      updateCenterImageProcessing();
+      render();
+    };
+
+    if (window.DEFAULT_UNIPRO_LOGO) {
+      topImage.src = window.DEFAULT_UNIPRO_LOGO;
+    } else {
+      topImage.src = 'assets/logo_unipro.png';
+    }
+
+    if (window.DEFAULT_SALTENA_LOGO) {
+      centerRawImage.src = window.DEFAULT_SALTENA_LOGO;
+    } else {
+      centerRawImage.src = 'assets/logo_saltena.png';
+    }
+
+    // PROCESADOR DE TRANSPARENCIA PARA IMAGEN CENTRAL
+    function updateCenterImageProcessing() {
+      if (!centerRawImage || !centerRawImage.naturalWidth) {
+        centerProcessedCanvas = null;
+        return;
+      }
+
+      if (!config.autoRemoveBg) {
+        centerProcessedCanvas = centerRawImage;
+        return;
+      }
+
+      const c = document.createElement('canvas');
+      const w = centerRawImage.naturalWidth;
+      const h = centerRawImage.naturalHeight;
+      c.width = w;
+      c.height = h;
+      const cCtx = c.getContext('2d');
+      cCtx.drawImage(centerRawImage, 0, 0);
+
+      const imgData = cCtx.getImageData(0, 0, w, h);
+      const d = imgData.data;
+
+      const sampleCoords = [
+        [0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1],
+        [Math.floor(w/2), 0], [0, Math.floor(h/2)]
+      ];
+      let bgR = 0, bgG = 0, bgB = 0, count = 0;
+      for (const [x, y] of sampleCoords) {
+        const idx = (y * w + x) * 4;
+        if (d[idx + 3] > 80) {
+          bgR += d[idx];
+          bgG += d[idx + 1];
+          bgB += d[idx + 2];
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        bgR /= count;
+        bgG /= count;
+        bgB /= count;
+        const tol = config.bgTolerance;
+        const tolSq = tol * tol * 3;
+
+        for (let i = 0; i < d.length; i += 4) {
+          const dr = d[i] - bgR;
+          const dg = d[i+1] - bgG;
+          const db = d[i+2] - bgB;
+          const distSq = dr*dr + dg*dg + db*db;
+          if (distSq < tolSq) {
+            const factor = Math.sqrt(distSq) / (tol * Math.sqrt(3));
+            d[i+3] = Math.round(d[i+3] * factor * factor);
+            if (distSq < tolSq * 0.5) {
+              d[i+3] = 0;
+            }
+          }
+        }
+        cCtx.putImageData(imgData, 0, 0);
+      }
+      centerProcessedCanvas = c;
+    }
+
+    // RENDERIZADO DEL BANNER
+    function render(targetCanvas = canvas, exportSize = 1000) {
+      const W = exportSize;
+      const H = exportSize;
+
+      targetCanvas.width = W;
+      targetCanvas.height = H;
+      const rCtx = targetCanvas.getContext('2d');
+
+      rCtx.clearRect(0, 0, W, H);
+
+      // 1. MARGEN / BORDE EXTERIOR BLANCO DE LA PLANTILLA
+      rCtx.fillStyle = '#ffffff';
+      rCtx.fillRect(0, 0, W, H);
+
+      // Dimensiones de la tarjeta interna
+      const marginPx = config.showOuterBorder ? (config.borderWidth / 1000) * W : 0;
+      const cardX = marginPx;
+      const cardY = marginPx;
+      const cardW = W - 2 * marginPx;
+      const cardH = H - 2 * marginPx;
+      const cardR = (config.cornerRadius / 1000) * W;
+
+      // Clip con esquinas redondeadas para la tarjeta
+      rCtx.save();
+      rCtx.beginPath();
+      rCtx.roundRect(cardX, cardY, cardW, cardH, cardR);
+      rCtx.clip();
+
+      // 2. FONDO BASE DE LA TARJETA
+      rCtx.fillStyle = config.bgColor;
+      rCtx.fillRect(cardX, cardY, cardW, cardH);
+
+      // 3. OSCURECIMIENTO PERIMETRAL / VIÑETA
+      if (config.vignetteIntensity > 0) {
+        const darkGrad = rCtx.createRadialGradient(
+          cardX + cardW * 0.5, cardY + cardH * 0.5, cardW * 0.25,
+          cardX + cardW * 0.5, cardY + cardH * 0.5, cardW * 0.72
+        );
+        darkGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        darkGrad.addColorStop(1, `rgba(0, 0, 0, ${config.vignetteIntensity})`);
+        rCtx.fillStyle = darkGrad;
+        rCtx.fillRect(cardX, cardY, cardW, cardH);
+      }
+
+      // 4. BRILLO RADIAL DE LUZ CENTRAL (RESPLANDOR)
+      if (config.glowIntensity > 0) {
+        const r = cardW * (config.glowRadius / 100);
+        const glowX = cardX + cardW * 0.5;
+        const glowY = cardY + cardH * 0.48;
+        const glowGrad = rCtx.createRadialGradient(
+          glowX, glowY, 0,
+          glowX, glowY, r
+        );
+        const alpha = config.glowIntensity;
+        glowGrad.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        glowGrad.addColorStop(0.35, `rgba(255, 255, 255, ${alpha * 0.75})`);
+        glowGrad.addColorStop(0.70, `rgba(255, 255, 255, ${alpha * 0.22})`);
+        glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        rCtx.fillStyle = glowGrad;
+        rCtx.fillRect(cardX, cardY, cardW, cardH);
+      }
+
+      // 5. CURVA BLANCA CARACTERÍSTICA (ESQUINA INFERIOR DERECHA)
+      if (config.showSwoosh) {
+        rCtx.save();
+        rCtx.fillStyle = '#ffffff';
+        rCtx.globalAlpha = config.swooshOpacity;
+        rCtx.beginPath();
+
+        // Curva superior (interior del swoosh): desde el lateral derecho hacia el borde inferior
+        const startX = cardX + cardW;
+        const startY = cardY + cardH * 0.67;
+        rCtx.moveTo(startX, startY);
+
+        rCtx.bezierCurveTo(
+          cardX + cardW * 0.97, cardY + cardH * 0.78,
+          cardX + cardW * 0.88, cardY + cardH * 0.92,
+          cardX + cardW * 0.64, cardY + cardH
+        );
+
+        // Borde inferior hacia el punto de inicio de la curva exterior
+        rCtx.lineTo(cardX + cardW * 0.83, cardY + cardH);
+
+        // Curva inferior (exterior del swoosh): subiendo hacia el lateral derecho
+        rCtx.bezierCurveTo(
+          cardX + cardW * 0.94, cardY + cardH * 0.96,
+          cardX + cardW * 0.98, cardY + cardH * 0.89,
+          cardX + cardW, cardY + cardH * 0.82
+        );
+
+        // Cerrar hacia el punto inicial por el lateral derecho
+        rCtx.lineTo(startX, startY);
+        rCtx.closePath();
+        rCtx.fill();
+        rCtx.restore();
+      }
+
+      // 6. IMAGEN / LOGO CENTRAL (SIN FONDO)
+      const imgToDrawCenter = centerProcessedCanvas || centerRawImage;
+      if (imgToDrawCenter && (imgToDrawCenter.width || imgToDrawCenter.naturalWidth) > 0) {
+        rCtx.save();
+
+        const imgW = imgToDrawCenter.naturalWidth || imgToDrawCenter.width;
+        const imgH = imgToDrawCenter.naturalHeight || imgToDrawCenter.height;
+        const scale = (config.centerScale / 100);
+        const targetWidth = cardW * scale;
+        const imgAspect = imgH / imgW;
+        const targetHeight = targetWidth * imgAspect;
+
+        const posX = cardX + (config.centerX / 100) * cardW - (targetWidth / 2);
+        const posY = cardY + (config.centerY / 100) * cardH - (targetHeight / 2);
+
+        if (config.centerDropShadow) {
+          rCtx.shadowColor = 'rgba(0, 0, 0, 0.40)';
+          rCtx.shadowBlur = 24 * (W / 1000);
+          rCtx.shadowOffsetY = 10 * (W / 1000);
+        }
+
+        rCtx.drawImage(imgToDrawCenter, posX, posY, targetWidth, targetHeight);
+        rCtx.restore();
+      }
+
+      // 7. LOGO SUPERIOR (UNIPRO / CABECERA - OPCIONAL)
+      if (config.showTopLogo && topImage && topImage.complete && topImage.naturalWidth > 0) {
+        rCtx.save();
+
+        const scale = (config.topScale / 100);
+        const targetWidth = cardW * scale;
+        const imgAspect = topImage.naturalHeight / topImage.naturalWidth;
+        const targetHeight = targetWidth * imgAspect;
+
+        const posX = cardX + (config.topX / 100) * cardW - (targetWidth / 2);
+        const posY = cardY + (config.topY / 100) * cardH - (targetHeight / 2);
+
+        let imgToDrawTop = topImage;
+
+        if (config.topForceWhite) {
+          const tintCanvas = document.createElement('canvas');
+          tintCanvas.width = topImage.naturalWidth;
+          tintCanvas.height = topImage.naturalHeight;
+          const tCtx = tintCanvas.getContext('2d');
+          tCtx.drawImage(topImage, 0, 0);
+          tCtx.globalCompositeOperation = 'source-in';
+          tCtx.fillStyle = '#ffffff';
+          tCtx.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
+          imgToDrawTop = tintCanvas;
+        }
+
+        rCtx.drawImage(imgToDrawTop, posX, posY, targetWidth, targetHeight);
+        rCtx.restore();
+      }
+
+      rCtx.restore(); // Fin del clip de la tarjeta
+
+      // 8. FILETE / CONTORNO SUTIL ALREDEDOR DE LA TARJETA
+      if (config.showOuterBorder && marginPx > 0) {
+        rCtx.lineWidth = Math.max(1.5, Math.round(W * 0.002));
+        rCtx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
+        rCtx.beginPath();
+        rCtx.roundRect(cardX, cardY, cardW, cardH, cardR);
+        rCtx.stroke();
+      }
+    }
+
+    // --- CONTROLES & EVENTOS ---
+
+    // Plantilla: Borde & Curva
+    showOuterBorder.addEventListener('change', (e) => {
+      config.showOuterBorder = e.target.checked;
+      document.getElementById('borderOptionsGroup').style.opacity = e.target.checked ? '1' : '0.4';
+      document.getElementById('borderOptionsGroup').style.pointerEvents = e.target.checked ? 'auto' : 'none';
+      render();
+    });
+
+    borderWidth.addEventListener('input', (e) => {
+      config.borderWidth = parseInt(e.target.value);
+      valBorderWidth.textContent = e.target.value + ' px';
+      render();
+    });
+
+    cornerRadius.addEventListener('input', (e) => {
+      config.cornerRadius = parseInt(e.target.value);
+      valCornerRadius.textContent = e.target.value + ' px';
+      render();
+    });
+
+    showSwoosh.addEventListener('change', (e) => {
+      config.showSwoosh = e.target.checked;
+      document.getElementById('swooshOptionsGroup').style.opacity = e.target.checked ? '1' : '0.4';
+      document.getElementById('swooshOptionsGroup').style.pointerEvents = e.target.checked ? 'auto' : 'none';
+      render();
+      showToast(e.target.checked ? 'Curva característica activada' : 'Curva característica desactivada');
+    });
+
+    swooshOpacity.addEventListener('input', (e) => {
+      config.swooshOpacity = e.target.value / 100;
+      valSwooshOpacity.textContent = e.target.value + '%';
+      render();
+    });
+
+    // Fondo
+    function updateBgColor(color) {
+      config.bgColor = color;
+      bgColorPicker.value = color;
+      bgColorText.value = color.toUpperCase();
+      document.querySelectorAll('.swatch-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.color.toLowerCase() === color.toLowerCase());
+      });
+      render();
+    }
+
+    bgColorPicker.addEventListener('input', (e) => updateBgColor(e.target.value));
+    bgColorText.addEventListener('change', (e) => {
+      let val = e.target.value.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#[0-9A-F]{6}$/i.test(val)) updateBgColor(val);
+    });
+
+    document.querySelectorAll('.swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => updateBgColor(btn.dataset.color));
+    });
+
+    glowIntensity.addEventListener('input', (e) => {
+      config.glowIntensity = e.target.value / 100;
+      valGlowIntensity.textContent = e.target.value + '%';
+      render();
+    });
+
+    glowRadius.addEventListener('input', (e) => {
+      config.glowRadius = parseInt(e.target.value);
+      valGlowRadius.textContent = e.target.value + '%';
+      render();
+    });
+
+    vignetteIntensity.addEventListener('input', (e) => {
+      config.vignetteIntensity = e.target.value / 100;
+      valVignette.textContent = e.target.value + '%';
+      render();
+    });
+
+    // Logo Superior
+    showTopLogo.addEventListener('change', (e) => {
+      config.showTopLogo = e.target.checked;
+      document.getElementById('topLogoSection').style.opacity = e.target.checked ? '1' : '0.35';
+      document.getElementById('topLogoSection').style.pointerEvents = e.target.checked ? 'auto' : 'none';
+      render();
+      showToast(e.target.checked ? 'Logo superior activado' : 'Logo superior desactivado');
+    });
+
+    topScale.addEventListener('input', (e) => {
+      config.topScale = parseInt(e.target.value);
+      valTopScale.textContent = e.target.value + '%';
+      render();
+    });
+
+    topY.addEventListener('input', (e) => {
+      config.topY = parseInt(e.target.value);
+      valTopY.textContent = e.target.value + '%';
+      render();
+    });
+
+    topX.addEventListener('input', (e) => {
+      config.topX = parseInt(e.target.value);
+      valTopX.textContent = e.target.value + '%';
+      render();
+    });
+
+    topForceWhite.addEventListener('change', (e) => {
+      config.topForceWhite = e.target.checked;
+      render();
+    });
+
+    // Logo Central
+    centerScale.addEventListener('input', (e) => {
+      config.centerScale = parseInt(e.target.value);
+      valCenterScale.textContent = e.target.value + '%';
+      render();
+    });
+
+    centerY.addEventListener('input', (e) => {
+      config.centerY = parseInt(e.target.value);
+      valCenterY.textContent = e.target.value + '%';
+      render();
+    });
+
+    centerX.addEventListener('input', (e) => {
+      config.centerX = parseInt(e.target.value);
+      valCenterX.textContent = e.target.value + '%';
+      render();
+    });
+
+    centerDropShadow.addEventListener('change', (e) => {
+      config.centerDropShadow = e.target.checked;
+      render();
+    });
+
+    autoRemoveBg.addEventListener('change', (e) => {
+      config.autoRemoveBg = e.target.checked;
+      toleranceGroup.style.display = e.target.checked ? 'flex' : 'none';
+      updateCenterImageProcessing();
+      render();
+      showToast(e.target.checked ? 'Fondo transparente activado' : 'Modo original activado');
+    });
+
+    bgTolerance.addEventListener('input', (e) => {
+      config.bgTolerance = parseInt(e.target.value);
+      valTolerance.textContent = e.target.value;
+      updateCenterImageProcessing();
+      render();
+    });
+
+    // Subida de archivos
+    function setupFileLoader(inputEl, dropZoneEl, onImageLoaded) {
+      inputEl.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => onImageLoaded(img);
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZoneEl.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropZoneEl.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZoneEl.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropZoneEl.classList.remove('dragover');
+        });
+      });
+      dropZoneEl.addEventListener('drop', (e) => {
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            const img = new Image();
+            img.onload = () => onImageLoaded(img);
+            img.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    setupFileLoader(topFileInput, topUploadZone, (img) => {
+      topImage = img;
+      render();
+      showToast('Logo superior cargado');
+    });
+
+    setupFileLoader(centerFileInput, centerUploadZone, (img) => {
+      centerRawImage = img;
+      updateCenterImageProcessing();
+      render();
+      showToast('Imagen central cargada');
+    });
+
+    // Drag & drop en el lienzo
+    const canvasWrapper = document.querySelector('.canvas-wrapper');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      canvasWrapper.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        canvas.style.transform = 'scale(1.02)';
+        canvas.style.outline = '3px dashed var(--accent)';
+      });
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      canvasWrapper.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        canvas.style.transform = 'scale(1)';
+        canvas.style.outline = 'none';
+      });
+    });
+    canvasWrapper.addEventListener('drop', (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const rect = canvas.getBoundingClientRect();
+        const dropY = e.clientY - rect.top;
+        const relativeY = dropY / rect.height;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onload = () => {
+            if (relativeY < 0.32) {
+              topImage = img;
+              config.showTopLogo = true;
+              showTopLogo.checked = true;
+              document.getElementById('topLogoSection').style.opacity = '1';
+              document.getElementById('topLogoSection').style.pointerEvents = 'auto';
+              showToast('Logo superior actualizado');
+            } else {
+              centerRawImage = img;
+              updateCenterImageProcessing();
+              showToast('Imagen central actualizada');
+            }
+            render();
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Botones de Muestras Rápidas
+    document.getElementById('btnRestoreSaltena').addEventListener('click', () => {
+      centerRawImage = new Image();
+      centerRawImage.onload = () => {
+        updateCenterImageProcessing();
+        render();
+      };
+      centerRawImage.src = window.DEFAULT_SALTENA_LOGO || 'assets/logo_saltena.png';
+      updateBgColor('#0052b4');
+      showToast('Muestra LA SALTEÑA cargada con fondo azul');
+    });
+
+    document.getElementById('btnRestoreAdler').addEventListener('click', () => {
+      centerRawImage = new Image();
+      centerRawImage.onload = () => {
+        updateCenterImageProcessing();
+        render();
+      };
+      centerRawImage.src = window.DEFAULT_ADLER_LOGO || 'assets/logo_adler_letras.png';
+      updateBgColor('#c80c14');
+      showToast('Muestra ADLER cargada con fondo rojo');
+    });
+
+    document.getElementById('btnClearCenterLogo').addEventListener('click', () => {
+      centerRawImage = new Image();
+      centerProcessedCanvas = null;
+      render();
+      showToast('Imagen central quitada');
+    });
+
+    document.getElementById('btnRestoreUnipro').addEventListener('click', () => {
+      topImage = new Image();
+      topImage.onload = () => render();
+      topImage.src = window.DEFAULT_UNIPRO_LOGO || 'assets/logo_unipro.png';
+      config.showTopLogo = true;
+      showTopLogo.checked = true;
+      document.getElementById('topLogoSection').style.opacity = '1';
+      document.getElementById('topLogoSection').style.pointerEvents = 'auto';
+      showToast('Logo UNIPRO cargado');
+    });
+
+    document.getElementById('btnClearTopLogo').addEventListener('click', () => {
+      config.showTopLogo = false;
+      showTopLogo.checked = false;
+      document.getElementById('topLogoSection').style.opacity = '0.35';
+      document.getElementById('topLogoSection').style.pointerEvents = 'none';
+      render();
+      showToast('Logo superior ocultado');
+    });
+
+    // Comparador
+    function updateCompareDisplay() {
+      if (compareOriginalToggle.checked) {
+        canvas.style.display = 'none';
+        if (compareSelect.value === 'saltena') {
+          imgRefSaltena.style.display = 'block';
+          imgRefAdler.style.display = 'none';
+        } else {
+          imgRefSaltena.style.display = 'none';
+          imgRefAdler.style.display = 'block';
+        }
+      } else {
+        canvas.style.display = 'block';
+        imgRefSaltena.style.display = 'none';
+        imgRefAdler.style.display = 'none';
+      }
+    }
+
+    compareOriginalToggle.addEventListener('change', updateCompareDisplay);
+    compareSelect.addEventListener('change', updateCompareDisplay);
+
+    // Reset
+    document.getElementById('btnResetDefaults').addEventListener('click', () => {
+      config = { ...defaultConfig };
+      showOuterBorder.checked = config.showOuterBorder;
+      borderWidth.value = config.borderWidth;
+      valBorderWidth.textContent = config.borderWidth + ' px';
+      cornerRadius.value = config.cornerRadius;
+      valCornerRadius.textContent = config.cornerRadius + ' px';
+      showSwoosh.checked = config.showSwoosh;
+      swooshOpacity.value = config.swooshOpacity * 100;
+      valSwooshOpacity.textContent = swooshOpacity.value + '%';
+
+      updateBgColor(config.bgColor);
+      glowIntensity.value = config.glowIntensity * 100;
+      valGlowIntensity.textContent = glowIntensity.value + '%';
+      glowRadius.value = config.glowRadius;
+      valGlowRadius.textContent = config.glowRadius + '%';
+      vignetteIntensity.value = config.vignetteIntensity * 100;
+      valVignette.textContent = vignetteIntensity.value + '%';
+
+      showTopLogo.checked = config.showTopLogo;
+      document.getElementById('topLogoSection').style.opacity = '1';
+      document.getElementById('topLogoSection').style.pointerEvents = 'auto';
+      topScale.value = config.topScale;
+      valTopScale.textContent = config.topScale + '%';
+      topY.value = config.topY;
+      valTopY.textContent = config.topY + '%';
+      topX.value = config.topX;
+      valTopX.textContent = config.topX + '%';
+      topForceWhite.checked = config.topForceWhite;
+
+      centerScale.value = config.centerScale;
+      valCenterScale.textContent = config.centerScale + '%';
+      centerY.value = config.centerY;
+      valCenterY.textContent = config.centerY + '%';
+      centerX.value = config.centerX;
+      valCenterX.textContent = config.centerX + '%';
+      centerDropShadow.checked = config.centerDropShadow;
+      autoRemoveBg.checked = config.autoRemoveBg;
+      toleranceGroup.style.display = 'none';
+
+      topImage = new Image();
+      centerRawImage = new Image();
+
+      let loaded = 0;
+      const onDone = () => {
+        loaded++;
+        if (loaded >= 2) {
+          updateCenterImageProcessing();
+          render();
+        }
+      };
+
+      topImage.onload = onDone;
+      centerRawImage.onload = onDone;
+
+      topImage.src = window.DEFAULT_UNIPRO_LOGO || 'assets/logo_unipro.png';
+      centerRawImage.src = window.DEFAULT_SALTENA_LOGO || 'assets/logo_saltena.png';
+
+      showToast('Ajustes restablecidos');
+    });
+
+    // DESCARGAR
+    function downloadImage() {
+      const res = parseInt(document.getElementById('exportResolution').value);
+      const format = document.querySelector('input[name="exportFormat"]:checked').value;
+      const mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+      const ext = format === 'jpeg' ? 'jpg' : 'png';
+
+      const exportCanvas = document.createElement('canvas');
+      render(exportCanvas, res);
+
+      const link = document.createElement('a');
+      link.download = `banner-categoria-${Date.now()}.${ext}`;
+      link.href = exportCanvas.toDataURL(mime, 0.95);
+      link.click();
+
+      showToast(`Imagen descargada en ${res}×${res} px`);
+    }
+
+    document.getElementById('btnDownload').addEventListener('click', downloadImage);
+    document.getElementById('btnDownloadBig').addEventListener('click', downloadImage);
+
+    // COPIAR AL PORTAPAPELES
+    document.getElementById('btnCopyClipboard').addEventListener('click', () => {
+      const exportCanvas = document.createElement('canvas');
+      render(exportCanvas, 1080);
+      exportCanvas.toBlob(blob => {
+        try {
+          navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]).then(() => {
+            showToast('¡Copiado al portapapeles! Pégalo con Ctrl+V');
+          }).catch(err => {
+            console.error(err);
+            downloadImage();
+          });
+        } catch (e) {
+          downloadImage();
+        }
+      }, 'image/png');
+    });
+
+    // TOAST NOTIFIER
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // RENDER INICIAL
+    render();
+  </script>
+</body>
+</html>
