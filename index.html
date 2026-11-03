@@ -6,7 +6,7 @@
   <title>Creador de Banners de Categorías & Marcas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Inter:wght@600;800;900&family=Montserrat:wght@700;800;900&family=Oswald:wght@600;700&family=Pacifico&family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&family=Righteous&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -89,7 +89,7 @@
     /* MAIN APP LAYOUT */
     .app-container {
       display: grid;
-      grid-template-columns: 450px 1fr;
+      grid-template-columns: 460px 1fr;
       flex: 1;
       height: calc(100vh - 67px);
       overflow: hidden;
@@ -225,9 +225,7 @@
       padding: 9px 12px;
       color: #fff;
       font-size: 0.9rem;
-      font-family: monospace;
-      text-transform: uppercase;
-      flex: 1;
+      width: 100%;
     }
 
     .palette-swatches {
@@ -422,6 +420,22 @@
       color: #fff;
     }
 
+    /* SELECT DROPDOWNS */
+    select.custom-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      width: 100%;
+      outline: none;
+    }
+    select.custom-select:focus {
+      border-color: var(--accent);
+    }
+
     /* PREVIEW VIEWPORT AREA */
     .preview-area {
       background-color: #0b1120;
@@ -454,8 +468,10 @@
       aspect-ratio: 1 / 1;
       border-radius: 14px;
       display: block;
-      transition: transform 0.2s ease;
+      transition: transform 0.15s ease;
       background-color: #ffffff;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     /* COMPARISON FLOATING SELECTOR */
@@ -499,6 +515,23 @@
       transform: translateY(0);
       opacity: 1;
     }
+
+    .drag-hint-pill {
+      position: absolute;
+      bottom: 16px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
@@ -515,7 +548,7 @@
       </div>
       <div>
         <h1 class="brand-title">Creador de Banners de Categorías</h1>
-        <p class="brand-subtitle">Formato corporativo con borde redondeado y curva característica</p>
+        <p class="brand-subtitle">Formato corporativo con borde redondeado, curva y textos movibles</p>
       </div>
     </div>
 
@@ -551,7 +584,6 @@
           <span class="badge-pill">Plantilla</span>
         </div>
 
-        <!-- Borde exterior blanco -->
         <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px;">
           <span>Borde Exterior Blanco de la Plantilla</span>
           <input type="checkbox" id="showOuterBorder" class="switch-input" checked>
@@ -576,7 +608,6 @@
           </div>
         </div>
 
-        <!-- Curva blanca característica en la esquina inferior -->
         <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px; margin-top:4px;">
           <span style="font-weight:600;">Curva Blanca Característica (Inferior Derecha)</span>
           <input type="checkbox" id="showSwoosh" class="switch-input" checked>
@@ -607,7 +638,7 @@
             <div class="color-input-wrapper">
               <input type="color" id="bgColorPicker" value="#0052b4">
             </div>
-            <input type="text" id="bgColorText" class="color-text-input" value="#0052B4" maxlength="7">
+            <input type="text" id="bgColorText" class="color-text-input" value="#0052B4" maxlength="7" style="text-transform:uppercase; font-family:monospace;">
           </div>
           <div class="palette-swatches">
             <button class="swatch-btn active" data-color="#0052b4" style="background:#0052b4;" title="Azul La Salteña"></button>
@@ -692,7 +723,7 @@
               <span>Posición Vertical (Y)</span>
               <span class="field-value" id="valTopY">14%</span>
             </label>
-            <input type="range" id="topY" min="3" max="35" value="14">
+            <input type="range" id="topY" min="3" max="45" value="14">
           </div>
 
           <div class="field-group">
@@ -736,7 +767,6 @@
           </div>
         </div>
 
-        <!-- REMOVEDOR AUTOMÁTICO DE FONDO -->
         <div style="background: rgba(15, 23, 42, 0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;">
           <label class="switch-label">
             <span>✨ Quitar Fondo Blanco / Sólido Automáticamente</span>
@@ -755,17 +785,17 @@
         <div class="field-group">
           <label class="field-label">
             <span>Tamaño / Escala</span>
-            <span class="field-value" id="valCenterScale">72%</span>
+            <span class="field-value" id="valCenterScale">68%</span>
           </label>
-          <input type="range" id="centerScale" min="20" max="95" value="72">
+          <input type="range" id="centerScale" min="20" max="95" value="68">
         </div>
 
         <div class="field-group">
           <label class="field-label">
             <span>Posición Vertical (Y)</span>
-            <span class="field-value" id="valCenterY">52%</span>
+            <span class="field-value" id="valCenterY">48%</span>
           </label>
-          <input type="range" id="centerY" min="15" max="85" value="52">
+          <input type="range" id="centerY" min="15" max="85" value="48">
         </div>
 
         <div class="field-group">
@@ -783,7 +813,153 @@
         </label>
       </div>
 
-      <!-- 5. RESOLUCIÓN & DESCARGA -->
+      <!-- 5. TEXTO INFERIOR / PERSONALIZADO (MOVIBLE Y MULTIFUENTE) -->
+      <div class="control-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+            Texto Inferior (Movible)
+          </span>
+          <span class="badge-pill" style="background:rgba(16, 185, 129, 0.2); color:#10b981;">Personalizable</span>
+        </div>
+
+        <label class="switch-label" style="background: rgba(15, 23, 42, 0.4); padding: 10px; border-radius: 8px;">
+          <span style="font-weight: 600;">Incluir Texto</span>
+          <input type="checkbox" id="showText" class="switch-input" checked>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </label>
+
+        <div id="textControlsSection" style="display:flex; flex-direction:column; gap:12px;">
+          <!-- Contenido del texto -->
+          <div class="field-group">
+            <label class="field-label">Contenido del Texto</label>
+            <input type="text" id="textContentInput" class="color-text-input" value="TAPAS PARA EMPANADAS" placeholder="Ej: TAPAS PARA EMPANADAS, QUESOS...">
+          </div>
+
+          <!-- Selector de Tipografía -->
+          <div class="field-group">
+            <label class="field-label">Tipografía / Tipo de Letra</label>
+            <select id="textFontSelect" class="custom-select">
+              <optgroup label="Modernas & Impacto">
+                <option value="Montserrat" selected style="font-family:'Montserrat', sans-serif; font-weight:800;">Montserrat (Moderna / Impacto)</option>
+                <option value="Bebas Neue" style="font-family:'Bebas Neue', sans-serif;">Bebas Neue (Condensada / Cartel)</option>
+                <option value="Anton" style="font-family:'Anton', sans-serif;">Anton (Ultra Gruesa / Oferta)</option>
+                <option value="Oswald" style="font-family:'Oswald', sans-serif; font-weight:700;">Oswald (Condensada Estilizada)</option>
+                <option value="Righteous" style="font-family:'Righteous', cursive;">Righteous (Retro / Titular)</option>
+                <option value="Poppins" style="font-family:'Poppins', sans-serif; font-weight:800;">Poppins (Geométrica Redonda)</option>
+                <option value="Plus Jakarta Sans" style="font-family:'Plus Jakarta Sans', sans-serif; font-weight:800;">Plus Jakarta Sans (Corporativa)</option>
+                <option value="Inter" style="font-family:'Inter', sans-serif; font-weight:800;">Inter (Minimalista / Limpia)</option>
+              </optgroup>
+              <optgroup label="Elegantes & Gourmet">
+                <option value="Playfair Display" style="font-family:'Playfair Display', serif; font-weight:800;">Playfair Display (Serif / Gourmet)</option>
+              </optgroup>
+              <optgroup label="Artesanales & Cursivas">
+                <option value="Pacifico" style="font-family:'Pacifico', cursive;">Pacifico (Cursiva Artesanal)</option>
+                <option value="Caveat" style="font-family:'Caveat', cursive; font-weight:700;">Caveat (Pizarra / Manuscrita)</option>
+                <option value="Dancing Script" style="font-family:'Dancing Script', cursive; font-weight:700;">Dancing Script (Caligráfica)</option>
+              </optgroup>
+              <optgroup label="Clásicas del Sistema">
+                <option value="Impact" style="font-family:Impact, sans-serif;">Impact (Clásica Potente)</option>
+                <option value="Arial Black" style="font-family:'Arial Black', sans-serif;">Arial Black (Clásica Pesada)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Color del Texto -->
+          <div class="field-group">
+            <label class="field-label">Color del Texto</label>
+            <div class="color-picker-row">
+              <div class="color-input-wrapper">
+                <input type="color" id="textColorPicker" value="#ffffff">
+              </div>
+              <input type="text" id="textColorText" class="color-text-input" value="#FFFFFF" maxlength="7" style="text-transform:uppercase; font-family:monospace;">
+            </div>
+            <div class="palette-swatches">
+              <button class="swatch-btn active" data-textcolor="#ffffff" style="background:#ffffff; border:1px solid #475569;" title="Blanco"></button>
+              <button class="swatch-btn" data-textcolor="#ffea00" style="background:#ffea00;" title="Amarillo Brillante"></button>
+              <button class="swatch-btn" data-textcolor="#f59e0b" style="background:#f59e0b;" title="Ámbar / Dorado"></button>
+              <button class="swatch-btn" data-textcolor="#ff6b00" style="background:#ff6b00;" title="Naranja"></button>
+              <button class="swatch-btn" data-textcolor="#ff2d55" style="background:#ff2d55;" title="Rojo"></button>
+              <button class="swatch-btn" data-textcolor="#00e5ff" style="background:#00e5ff;" title="Cian"></button>
+              <button class="swatch-btn" data-textcolor="#00e676" style="background:#00e676;" title="Verde Lima"></button>
+              <button class="swatch-btn" data-textcolor="#0f172a" style="background:#0f172a;" title="Negro Profundo"></button>
+            </div>
+          </div>
+
+          <!-- Tamaño del Texto -->
+          <div class="field-group">
+            <label class="field-label">
+              <span>Tamaño de Letra</span>
+              <span class="field-value" id="valTextSize">50 px</span>
+            </label>
+            <input type="range" id="textSize" min="18" max="110" value="50">
+          </div>
+
+          <!-- Posición Vertical (Y) y Horizontal (X) -->
+          <div class="field-group">
+            <label class="field-label">
+              <span>Posición Vertical (Y)</span>
+              <span class="field-value" id="valTextY">82%</span>
+            </label>
+            <input type="range" id="textY" min="5" max="95" value="82">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span>Posición Horizontal (X)</span>
+              <span class="field-value" id="valTextX">50%</span>
+            </label>
+            <input type="range" id="textX" min="5" max="95" value="50">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="quick-asset-btn" id="btnCenterTextX" style="width:100%;">Centrar texto en el medio (X: 50%)</button>
+          </div>
+
+          <!-- Opciones de estilo: Mayúsculas, Sombra, Contorno -->
+          <label class="switch-label">
+            <span>Forzar Todo en MAYÚSCULAS</span>
+            <input type="checkbox" id="textUppercase" class="switch-input" checked>
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+          </label>
+
+          <label class="switch-label">
+            <span>Sombra de Profundidad (3D)</span>
+            <input type="checkbox" id="textShadow" class="switch-input" checked>
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+          </label>
+
+          <!-- Contorno / Stroke -->
+          <label class="switch-label">
+            <span>Contorno Exterior de Letra (Delineado)</span>
+            <input type="checkbox" id="textStroke" class="switch-input" checked>
+            <div class="switch-track"><div class="switch-thumb"></div></div>
+          </label>
+
+          <div id="strokeSettings" style="display:flex; flex-direction:column; gap:8px; background:rgba(15,23,42,0.3); padding:8px; border-radius:8px;">
+            <div class="field-group">
+              <label class="field-label">
+                <span>Grosor del Contorno</span>
+                <span class="field-value" id="valStrokeWidth">5 px</span>
+              </label>
+              <input type="range" id="textStrokeWidth" min="1" max="16" value="5">
+            </div>
+            <div class="color-picker-row">
+              <span style="font-size:0.78rem; color:var(--text-muted); flex:1;">Color del Contorno:</span>
+              <div class="color-input-wrapper" style="width:34px; height:30px;">
+                <input type="color" id="textStrokeColorPicker" value="#002554">
+              </div>
+              <button class="quick-asset-btn" id="btnSyncStrokeColor" title="Oscurecer según fondo">Oscuro Auto</button>
+            </div>
+          </div>
+
+          <div style="font-size:0.76rem; color:#38bdf8; background:rgba(56, 189, 248, 0.08); padding:8px 10px; border-radius:6px; border-left:3px solid #38bdf8; line-height:1.4;">
+            💡 <strong>Interactividad:</strong> ¡Puedes hacer clic y <strong>arrastrar el texto</strong> (o los logos) directamente en la imagen de la derecha para moverlos libremente con el mouse!
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. RESOLUCIÓN & DESCARGA -->
       <div class="control-card">
         <div class="card-header">
           <span class="card-title">
@@ -794,7 +970,7 @@
 
         <div class="field-group">
           <label class="field-label">Resolución de salida</label>
-          <select id="exportResolution" style="background:var(--bg-input); border:1px solid var(--border-color); color:#fff; padding:9px 12px; border-radius:8px; font-size:0.85rem; cursor:pointer;">
+          <select id="exportResolution" class="custom-select">
             <option value="1080" selected>1080 × 1080 px (Recomendado - HD)</option>
             <option value="1200">1200 × 1200 px (E-commerce / MercadoLibre)</option>
             <option value="800">800 × 800 px (Catálogo Web ligero)</option>
@@ -842,6 +1018,11 @@
         <img id="imgRefSaltena" src="referencia_saltena.jpg" style="display:none; max-width:100%; max-height:75vh; border-radius:14px; aspect-ratio:1/1;">
         <img id="imgRefAdler" src="referencia_original.jpg" style="display:none; max-width:100%; max-height:75vh; border-radius:14px; aspect-ratio:1/1;">
       </div>
+
+      <div class="drag-hint-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>
+        <span>Arrastra textos y logos directamente en el lienzo para moverlos</span>
+      </div>
     </div>
 
   </div>
@@ -876,12 +1057,27 @@
       topForceWhite: false,
 
       // Logo Central (Sin Fondo)
-      centerScale: 72,
-      centerY: 52,
+      centerScale: 68,
+      centerY: 48,
       centerX: 50,
       centerDropShadow: true,
       autoRemoveBg: false,
-      bgTolerance: 35
+      bgTolerance: 35,
+
+      // Texto Inferior / Personalizado (Movible)
+      showText: true,
+      textContent: 'TAPAS PARA EMPANADAS',
+      textFont: 'Montserrat',
+      textSize: 50,
+      textX: 50,
+      textY: 82,
+      textColor: '#ffffff',
+      textWeight: '800',
+      textUppercase: true,
+      textShadow: true,
+      textStroke: true,
+      textStrokeWidth: 5,
+      textStrokeColor: '#002554'
     };
 
     let config = { ...defaultConfig };
@@ -942,7 +1138,30 @@
     const centerFileInput = document.getElementById('centerFileInput');
     const centerUploadZone = document.getElementById('centerUploadZone');
 
-    // INICIALIZACIÓN
+    // Text DOM Elements
+    const showText = document.getElementById('showText');
+    const textControlsSection = document.getElementById('textControlsSection');
+    const textContentInput = document.getElementById('textContentInput');
+    const textFontSelect = document.getElementById('textFontSelect');
+    const textColorPicker = document.getElementById('textColorPicker');
+    const textColorText = document.getElementById('textColorText');
+    const textSize = document.getElementById('textSize');
+    const valTextSize = document.getElementById('valTextSize');
+    const textY = document.getElementById('textY');
+    const valTextY = document.getElementById('valTextY');
+    const textX = document.getElementById('textX');
+    const valTextX = document.getElementById('valTextX');
+    const btnCenterTextX = document.getElementById('btnCenterTextX');
+    const textUppercase = document.getElementById('textUppercase');
+    const textShadow = document.getElementById('textShadow');
+    const textStroke = document.getElementById('textStroke');
+    const strokeSettings = document.getElementById('strokeSettings');
+    const textStrokeWidth = document.getElementById('textStrokeWidth');
+    const valStrokeWidth = document.getElementById('valStrokeWidth');
+    const textStrokeColorPicker = document.getElementById('textStrokeColorPicker');
+    const btnSyncStrokeColor = document.getElementById('btnSyncStrokeColor');
+
+    // INICIALIZACIÓN DE IMÁGENES
     topImage.onload = () => render();
     centerRawImage.onload = () => {
       updateCenterImageProcessing();
@@ -959,6 +1178,11 @@
       centerRawImage.src = window.DEFAULT_SALTENA_LOGO;
     } else {
       centerRawImage.src = 'assets/logo_saltena.png';
+    }
+
+    // Asegurar render cuando las fuentes web carguen
+    if (document.fonts) {
+      document.fonts.ready.then(() => render());
     }
 
     // PROCESADOR DE TRANSPARENCIA PARA IMAGEN CENTRAL
@@ -1022,6 +1246,20 @@
         cCtx.putImageData(imgData, 0, 0);
       }
       centerProcessedCanvas = c;
+    }
+
+    // Helper para sombra / trazo automático oscuro según color de fondo
+    function getDarkTone(hexColor, factor = 0.4) {
+      let r = 0, g = 0, b = 0;
+      if (hexColor.startsWith('#')) {
+        r = parseInt(hexColor.slice(1, 3), 16) || 0;
+        g = parseInt(hexColor.slice(3, 5), 16) || 0;
+        b = parseInt(hexColor.slice(5, 7), 16) || 0;
+      }
+      r = Math.round(r * factor);
+      g = Math.round(g * factor);
+      b = Math.round(b * factor);
+      return `rgb(${r}, ${g}, ${b})`;
     }
 
     // RENDERIZADO DEL BANNER
@@ -1095,7 +1333,6 @@
         rCtx.globalAlpha = config.swooshOpacity;
         rCtx.beginPath();
 
-        // Curva superior (interior del swoosh): desde el lateral derecho hacia el borde inferior
         const startX = cardX + cardW;
         const startY = cardY + cardH * 0.67;
         rCtx.moveTo(startX, startY);
@@ -1106,17 +1343,14 @@
           cardX + cardW * 0.64, cardY + cardH
         );
 
-        // Borde inferior hacia el punto de inicio de la curva exterior
         rCtx.lineTo(cardX + cardW * 0.83, cardY + cardH);
 
-        // Curva inferior (exterior del swoosh): subiendo hacia el lateral derecho
         rCtx.bezierCurveTo(
           cardX + cardW * 0.94, cardY + cardH * 0.96,
           cardX + cardW * 0.98, cardY + cardH * 0.89,
           cardX + cardW, cardY + cardH * 0.82
         );
 
-        // Cerrar hacia el punto inicial por el lateral derecho
         rCtx.lineTo(startX, startY);
         rCtx.closePath();
         rCtx.fill();
@@ -1178,9 +1412,59 @@
         rCtx.restore();
       }
 
+      // 8. TEXTO INFERIOR / PERSONALIZADO (MOVIBLE & MULTIFUENTE)
+      if (config.showText && config.textContent && config.textContent.trim().length > 0) {
+        rCtx.save();
+
+        const fontSize = (config.textSize / 1000) * cardW;
+        const fontWeight = config.textWeight || '800';
+        const fontFamily = config.textFont || 'Montserrat';
+
+        rCtx.font = `${fontWeight} ${fontSize}px "${fontFamily}", Impact, Arial, sans-serif`;
+        rCtx.textAlign = 'center';
+        rCtx.textBaseline = 'middle';
+
+        const textX = cardX + (config.textX / 100) * cardW;
+        const textY = cardY + (config.textY / 100) * cardH;
+
+        let textRaw = config.textContent;
+        if (config.textUppercase) textRaw = textRaw.toUpperCase();
+
+        const lines = textRaw.split('\n');
+        const lineHeight = fontSize * 1.15;
+        const startY = textY - ((lines.length - 1) * lineHeight) / 2;
+
+        // Sombra de lectura 3D
+        if (config.textShadow) {
+          rCtx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+          rCtx.shadowBlur = Math.max(4, fontSize * 0.22);
+          rCtx.shadowOffsetY = Math.max(2, fontSize * 0.08);
+          rCtx.shadowOffsetX = 0;
+        }
+
+        // Borde / Delineado exterior (Stroke)
+        if (config.textStroke && config.textStrokeWidth > 0) {
+          rCtx.strokeStyle = config.textStrokeColor || '#002554';
+          rCtx.lineWidth = (config.textStrokeWidth / 1000) * cardW;
+          rCtx.lineJoin = 'round';
+          rCtx.miterLimit = 2;
+          lines.forEach((line, idx) => {
+            rCtx.strokeText(line, textX, startY + idx * lineHeight);
+          });
+        }
+
+        // Relleno principal de la letra
+        rCtx.fillStyle = config.textColor || '#ffffff';
+        lines.forEach((line, idx) => {
+          rCtx.fillText(line, textX, startY + idx * lineHeight);
+        });
+
+        rCtx.restore();
+      }
+
       rCtx.restore(); // Fin del clip de la tarjeta
 
-      // 8. FILETE / CONTORNO SUTIL ALREDEDOR DE LA TARJETA
+      // 9. FILETE / CONTORNO SUTIL ALREDEDOR DE LA TARJETA
       if (config.showOuterBorder && marginPx > 0) {
         rCtx.lineWidth = Math.max(1.5, Math.round(W * 0.002));
         rCtx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
@@ -1231,10 +1515,22 @@
       config.bgColor = color;
       bgColorPicker.value = color;
       bgColorText.value = color.toUpperCase();
-      document.querySelectorAll('.swatch-btn').forEach(btn => {
+      document.querySelectorAll('.palette-swatches .swatch-btn[data-color]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.color.toLowerCase() === color.toLowerCase());
       });
+      // Sugerir contorno de texto contrastante
+      if (config.textStrokeColor === defaultConfig.textStrokeColor || config.autoStroke) {
+        config.textStrokeColor = getDarkTone(color, 0.3);
+        textStrokeColorPicker.value = rgbToHex(config.textStrokeColor);
+      }
       render();
+    }
+
+    function rgbToHex(rgbStr) {
+      if (rgbStr.startsWith('#')) return rgbStr;
+      const m = rgbStr.match(/\d+/g);
+      if (!m || m.length < 3) return '#002554';
+      return '#' + ((1 << 24) + (parseInt(m[0]) << 16) + (parseInt(m[1]) << 8) + parseInt(m[2])).toString(16).slice(1);
     }
 
     bgColorPicker.addEventListener('input', (e) => updateBgColor(e.target.value));
@@ -1244,7 +1540,7 @@
       if (/^#[0-9A-F]{6}$/i.test(val)) updateBgColor(val);
     });
 
-    document.querySelectorAll('.swatch-btn').forEach(btn => {
+    document.querySelectorAll('.palette-swatches .swatch-btn[data-color]').forEach(btn => {
       btn.addEventListener('click', () => updateBgColor(btn.dataset.color));
     });
 
@@ -1337,6 +1633,106 @@
       render();
     });
 
+    // --- EVENTOS DEL TEXTO INFERIOR ---
+    showText.addEventListener('change', (e) => {
+      config.showText = e.target.checked;
+      textControlsSection.style.opacity = e.target.checked ? '1' : '0.35';
+      textControlsSection.style.pointerEvents = e.target.checked ? 'auto' : 'none';
+      render();
+      showToast(e.target.checked ? 'Texto activado' : 'Texto ocultado');
+    });
+
+    textContentInput.addEventListener('input', (e) => {
+      config.textContent = e.target.value;
+      render();
+    });
+
+    textFontSelect.addEventListener('change', (e) => {
+      config.textFont = e.target.value;
+      render();
+    });
+
+    function updateTextColor(color) {
+      config.textColor = color;
+      textColorPicker.value = color;
+      textColorText.value = color.toUpperCase();
+      document.querySelectorAll('.palette-swatches .swatch-btn[data-textcolor]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.textcolor.toLowerCase() === color.toLowerCase());
+      });
+      render();
+    }
+
+    textColorPicker.addEventListener('input', (e) => updateTextColor(e.target.value));
+    textColorText.addEventListener('change', (e) => {
+      let val = e.target.value.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#[0-9A-F]{6}$/i.test(val)) updateTextColor(val);
+    });
+
+    document.querySelectorAll('.palette-swatches .swatch-btn[data-textcolor]').forEach(btn => {
+      btn.addEventListener('click', () => updateTextColor(btn.dataset.textcolor));
+    });
+
+    textSize.addEventListener('input', (e) => {
+      config.textSize = parseInt(e.target.value);
+      valTextSize.textContent = e.target.value + ' px';
+      render();
+    });
+
+    textY.addEventListener('input', (e) => {
+      config.textY = parseInt(e.target.value);
+      valTextY.textContent = e.target.value + '%';
+      render();
+    });
+
+    textX.addEventListener('input', (e) => {
+      config.textX = parseInt(e.target.value);
+      valTextX.textContent = e.target.value + '%';
+      render();
+    });
+
+    btnCenterTextX.addEventListener('click', () => {
+      config.textX = 50;
+      textX.value = 50;
+      valTextX.textContent = '50%';
+      render();
+      showToast('Texto centrado horizontalmente');
+    });
+
+    textUppercase.addEventListener('change', (e) => {
+      config.textUppercase = e.target.checked;
+      render();
+    });
+
+    textShadow.addEventListener('change', (e) => {
+      config.textShadow = e.target.checked;
+      render();
+    });
+
+    textStroke.addEventListener('change', (e) => {
+      config.textStroke = e.target.checked;
+      strokeSettings.style.display = e.target.checked ? 'flex' : 'none';
+      render();
+    });
+
+    textStrokeWidth.addEventListener('input', (e) => {
+      config.textStrokeWidth = parseInt(e.target.value);
+      valStrokeWidth.textContent = e.target.value + ' px';
+      render();
+    });
+
+    textStrokeColorPicker.addEventListener('input', (e) => {
+      config.textStrokeColor = e.target.value;
+      render();
+    });
+
+    btnSyncStrokeColor.addEventListener('click', () => {
+      config.textStrokeColor = getDarkTone(config.bgColor, 0.25);
+      textStrokeColorPicker.value = rgbToHex(config.textStrokeColor);
+      render();
+      showToast('Contorno oscurecido automáticamente');
+    });
+
     // Subida de archivos
     function setupFileLoader(inputEl, dropZoneEl, onImageLoaded) {
       inputEl.addEventListener('change', (e) => {
@@ -1390,7 +1786,203 @@
       showToast('Imagen central cargada');
     });
 
-    // Drag & drop en el lienzo
+    // --- ARRASTRE DIRECTO EN EL LIENZO (CANVAS MOUSE & TOUCH DRAGGING) ---
+    let activeDrag = null;
+
+    function getCanvasCoords(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = 1000 / rect.width;
+      const scaleY = 1000 / rect.height;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function hitTestCanvas(cx, cy) {
+      const marginPx = config.showOuterBorder ? (config.borderWidth / 1000) * 1000 : 0;
+      const cardW = 1000 - 2 * marginPx;
+      const cardH = 1000 - 2 * marginPx;
+
+      // 1. Probar Texto
+      if (config.showText && config.textContent && config.textContent.trim().length > 0) {
+        const tx = cardXFor1000() + (config.textX / 100) * cardW;
+        const ty = cardYFor1000() + (config.textY / 100) * cardH;
+        const fontSize = (config.textSize / 1000) * cardW;
+        ctx.save();
+        ctx.font = `${config.textWeight || '800'} ${fontSize}px "${config.textFont || 'Montserrat'}"`;
+        const metrics = ctx.measureText(config.textUppercase ? config.textContent.toUpperCase() : config.textContent);
+        ctx.restore();
+        const halfW = (metrics.width / 2) + 20;
+        const halfH = (fontSize * 0.9) + 15;
+        if (cx >= tx - halfW && cx <= tx + halfW && cy >= ty - halfH && cy <= ty + halfH) {
+          return 'text';
+        }
+      }
+
+      // 2. Probar Logo Superior
+      if (config.showTopLogo && topImage && topImage.naturalWidth) {
+        const topW = cardW * (config.topScale / 100);
+        const topH = topW * (topImage.naturalHeight / topImage.naturalWidth);
+        const tx = cardXFor1000() + (config.topX / 100) * cardW;
+        const ty = cardYFor1000() + (config.topY / 100) * cardH;
+        if (cx >= tx - topW/2 && cx <= tx + topW/2 && cy >= ty - topH/2 && cy <= ty + topH/2) {
+          return 'top';
+        }
+      }
+
+      // 3. Probar Imagen Central
+      const imgCenter = centerProcessedCanvas || centerRawImage;
+      if (imgCenter && (imgCenter.width || imgCenter.naturalWidth)) {
+        const cw = cardW * (config.centerScale / 100);
+        const ch = cw * ((imgCenter.naturalHeight || imgCenter.height) / (imgCenter.naturalWidth || imgCenter.width));
+        const cxCenter = cardXFor1000() + (config.centerX / 100) * cardW;
+        const cyCenter = cardYFor1000() + (config.centerY / 100) * cardH;
+        if (cx >= cxCenter - cw/2 && cx <= cxCenter + cw/2 && cy >= cyCenter - ch/2 && cy <= cyCenter + ch/2) {
+          return 'center';
+        }
+      }
+
+      return null;
+    }
+
+    function cardXFor1000() {
+      return config.showOuterBorder ? (config.borderWidth / 1000) * 1000 : 0;
+    }
+    function cardYFor1000() {
+      return cardXFor1000();
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const pos = getCanvasCoords(e.clientX, e.clientY);
+      if (!activeDrag) {
+        const hit = hitTestCanvas(pos.x, pos.y);
+        canvas.style.cursor = hit ? 'move' : 'default';
+      } else {
+        canvas.style.cursor = 'move';
+        const marginPx = cardXFor1000();
+        const cardW = 1000 - 2 * marginPx;
+        const cardH = 1000 - 2 * marginPx;
+
+        const dx = ((pos.x - activeDrag.startX) / cardW) * 100;
+        const dy = ((pos.y - activeDrag.startY) / cardH) * 100;
+
+        if (activeDrag.target === 'text') {
+          config.textX = Math.round(Math.min(95, Math.max(5, activeDrag.initialPropX + dx)));
+          config.textY = Math.round(Math.min(95, Math.max(5, activeDrag.initialPropY + dy)));
+          textX.value = config.textX;
+          valTextX.textContent = config.textX + '%';
+          textY.value = config.textY;
+          valTextY.textContent = config.textY + '%';
+        } else if (activeDrag.target === 'center') {
+          config.centerX = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropX + dx)));
+          config.centerY = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropY + dy)));
+          centerX.value = config.centerX;
+          valCenterX.textContent = config.centerX + '%';
+          centerY.value = config.centerY;
+          valCenterY.textContent = config.centerY + '%';
+        } else if (activeDrag.target === 'top') {
+          config.topX = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropX + dx)));
+          config.topY = Math.round(Math.min(45, Math.max(5, activeDrag.initialPropY + dy)));
+          topX.value = config.topX;
+          valTopX.textContent = config.topX + '%';
+          topY.value = config.topY;
+          valTopY.textContent = config.topY + '%';
+        }
+        render();
+      }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      const pos = getCanvasCoords(e.clientX, e.clientY);
+      const hit = hitTestCanvas(pos.x, pos.y);
+      if (hit) {
+        e.preventDefault();
+        let initialPropX = 50, initialPropY = 50;
+        if (hit === 'text') {
+          initialPropX = config.textX;
+          initialPropY = config.textY;
+        } else if (hit === 'center') {
+          initialPropX = config.centerX;
+          initialPropY = config.centerY;
+        } else if (hit === 'top') {
+          initialPropX = config.topX;
+          initialPropY = config.topY;
+        }
+        activeDrag = {
+          target: hit,
+          startX: pos.x,
+          startY: pos.y,
+          initialPropX,
+          initialPropY
+        };
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (activeDrag) {
+        activeDrag = null;
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    // Soporte táctil en lienzos
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const pos = getCanvasCoords(touch.clientX, touch.clientY);
+        const hit = hitTestCanvas(pos.x, pos.y);
+        if (hit) {
+          e.preventDefault();
+          let initialPropX = 50, initialPropY = 50;
+          if (hit === 'text') { initialPropX = config.textX; initialPropY = config.textY; }
+          else if (hit === 'center') { initialPropX = config.centerX; initialPropY = config.centerY; }
+          else if (hit === 'top') { initialPropX = config.topX; initialPropY = config.topY; }
+          activeDrag = { target: hit, startX: pos.x, startY: pos.y, initialPropX, initialPropY };
+        }
+      }
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (activeDrag && e.touches.length === 1) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const pos = getCanvasCoords(touch.clientX, touch.clientY);
+        const marginPx = cardXFor1000();
+        const cardW = 1000 - 2 * marginPx;
+        const cardH = 1000 - 2 * marginPx;
+        const dx = ((pos.x - activeDrag.startX) / cardW) * 100;
+        const dy = ((pos.y - activeDrag.startY) / cardH) * 100;
+
+        if (activeDrag.target === 'text') {
+          config.textX = Math.round(Math.min(95, Math.max(5, activeDrag.initialPropX + dx)));
+          config.textY = Math.round(Math.min(95, Math.max(5, activeDrag.initialPropY + dy)));
+          textX.value = config.textX;
+          valTextX.textContent = config.textX + '%';
+          textY.value = config.textY;
+          valTextY.textContent = config.textY + '%';
+        } else if (activeDrag.target === 'center') {
+          config.centerX = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropX + dx)));
+          config.centerY = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropY + dy)));
+          centerX.value = config.centerX;
+          valCenterX.textContent = config.centerX + '%';
+          centerY.value = config.centerY;
+          valCenterY.textContent = config.centerY + '%';
+        } else if (activeDrag.target === 'top') {
+          config.topX = Math.round(Math.min(85, Math.max(15, activeDrag.initialPropX + dx)));
+          config.topY = Math.round(Math.min(45, Math.max(5, activeDrag.initialPropY + dy)));
+          topX.value = config.topX;
+          valTopX.textContent = config.topX + '%';
+          topY.value = config.topY;
+          valTopY.textContent = config.topY + '%';
+        }
+        render();
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', () => { activeDrag = null; });
+
+    // Drag & drop de archivos en el lienzo
     const canvasWrapper = document.querySelector('.canvas-wrapper');
     ['dragenter', 'dragover'].forEach(eventName => {
       canvasWrapper.addEventListener(eventName, (e) => {
@@ -1446,6 +2038,8 @@
       };
       centerRawImage.src = window.DEFAULT_SALTENA_LOGO || 'assets/logo_saltena.png';
       updateBgColor('#0052b4');
+      config.textContent = 'TAPAS PARA EMPANADAS';
+      textContentInput.value = config.textContent;
       showToast('Muestra LA SALTEÑA cargada con fondo azul');
     });
 
@@ -1457,6 +2051,8 @@
       };
       centerRawImage.src = window.DEFAULT_ADLER_LOGO || 'assets/logo_adler_letras.png';
       updateBgColor('#c80c14');
+      config.textContent = 'QUESOS EN TRIANGULITOS';
+      textContentInput.value = config.textContent;
       showToast('Muestra ADLER cargada con fondo rojo');
     });
 
@@ -1548,6 +2144,27 @@
       centerDropShadow.checked = config.centerDropShadow;
       autoRemoveBg.checked = config.autoRemoveBg;
       toleranceGroup.style.display = 'none';
+
+      // Text reset
+      showText.checked = config.showText;
+      textControlsSection.style.opacity = '1';
+      textControlsSection.style.pointerEvents = 'auto';
+      textContentInput.value = config.textContent;
+      textFontSelect.value = config.textFont;
+      updateTextColor(config.textColor);
+      textSize.value = config.textSize;
+      valTextSize.textContent = config.textSize + ' px';
+      textY.value = config.textY;
+      valTextY.textContent = config.textY + '%';
+      textX.value = config.textX;
+      valTextX.textContent = config.textX + '%';
+      textUppercase.checked = config.textUppercase;
+      textShadow.checked = config.textShadow;
+      textStroke.checked = config.textStroke;
+      strokeSettings.style.display = 'flex';
+      textStrokeWidth.value = config.textStrokeWidth;
+      valStrokeWidth.textContent = config.textStrokeWidth + ' px';
+      textStrokeColorPicker.value = config.textStrokeColor;
 
       topImage = new Image();
       centerRawImage = new Image();
